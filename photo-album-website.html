@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Album</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f7;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        .nav-links a:hover {
+            color: #0066cc;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('3D-Flower-Wallpaper-High-Resolution.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #fff;
+            padding: 0 20px;
+        }
+        
+        .hero h1 {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+        
+        .hero p {
+            font-size: 20px;
+            max-width: 700px;
+        }
+        
+        /* Album Section */
+        .container {
+            max-width: 1200px;
+            margin: 60px auto;
+            padding: 0 20px;
+        }
+        
+        .section-title {
+            font-size: 32px;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            background: #fff;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-btn:hover, .filter-btn.active {
+            background: #0066cc;
+            color: #fff;
+        }
+        
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        
+        .gallery-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+            height: 300px;
+        }
+        
+        .gallery-item:hover {
+            transform: translateY(-5px);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+        
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+        
+        .item-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.7));
+            padding: 20px;
+            color: #fff;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .gallery-item:hover .item-overlay {
+            opacity: 1;
+        }
+        
+        /* Lightbox */
+        .lightbox {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            padding: 30px;
+        }
+        
+        .lightbox.active {
+            display: flex;
+        }
+        
+        .lightbox-content {
+            max-width: 90%;
+            max-height: 80vh;
+            position: relative;
+        }
+        
+        .lightbox-img {
+            max-width: 100%;
+            max-height: 80vh;
+            object-fit: contain;
+            border-radius: 5px;
+        }
+        
+        .close-lightbox {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            font-size: 30px;
+            color: #fff;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        
+        .lightbox-nav {
+            position: absolute;
+            top: 50%;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            transform: translateY(-50%);
+        }
+        
+        .lightbox-nav button {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        .lightbox-nav button:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        
+        .lightbox-caption {
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            color: #fff;
+        }
+        
+        /* Footer */
+        footer {
+            background: #333;
+            color: #fff;
+            padding: 40px 0;
+            text-align: center;
+        }
+        
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .social-links {
+            margin: 20px 0;
+        }
+        
+        .social-links a {
+            color: #fff;
+            font-size: 20px;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 36px;
+            }
+            
+            .hero p {
+                font-size: 18px;
+            }
+            
+            .gallery {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+            
+            .gallery-item {
+                height: 250px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .navbar {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-links {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .nav-links li {
+                margin-left: 0;
+            }
+            
+            .hero h1 {
+                font-size: 28px;
+            }
+            
+            .gallery {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <nav class="navbar">
+            <a href="#" class="logo">Album</a>
+            <ul class="nav-links">
+                <li><a href="#" class="active">Home</a></li>
+                <li><a href="#">Albums</a></li>
+                <li><a href="#">About</a></li>
+                <li><a href="#">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>My Personal Photo Journey</h1>
+        <p>Capturing life's precious moments one photo at a time</p>
+    </section>
+    
+    <!-- Album Section -->
+    <section class="container">
+        <h2 class="section-title">Photo Gallery</h2>
+        
+        <div class="filter-buttons">
+            <button class="filter-btn active" data-filter="all">All</button>
+            <button class="filter-btn" data-filter="nature">Nature</button>
+            <button class="filter-btn" data-filter="travel">Travel</button>
+            <button class="filter-btn" data-filter="people">People</button>
+        </div>
+        
+        <div class="gallery">
+            <!-- Nature Category -->
+            <div class="gallery-item" data-category="nature">
+                <img src="download (1).jpeg" alt="Beautiful mountain landscape">
+                <div class="item-overlay">
+                    <h3>Mountain View</h3>
+                    <p>Beautiful sunrise in the mountains</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="ForestPath.jpeg" alt="Forest path">
+                <div class="item-overlay">
+                    <h3>Forest Path</h3>
+                    <p>Morning light through the trees</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="nature">
+                <img src="Ocian Sunset.jpeg" alt="Ocean sunset">
+                <div class="item-overlay">
+                    <h3>Ocean Sunset</h3>
+                    <p>Peaceful evening by the sea</p>
+                </div>
+            </div>
+            
+            <!-- Travel Category -->
+            <div class="gallery-item" data-category="travel">
+                <img src="City Skyline.jpeg" alt="City skyline">
+                <div class="item-overlay">
+                    <h3>City Lights</h3>
+                    <p>Urban landscape at night</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="travel">
+                <img src="Historic architecture.jpeg" alt="Historic architecture">
+                <div class="item-overlay">
+                    <h3>Ancient Temple</h3>
+                    <p>Historical site exploration</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="travel">
+                <img src="Beach vacation.jpeg" alt="Beach vacation">
+                <div class="item-overlay">
+                    <h3>Tropical Paradise</h3>
+                    <p>Summer getaway memories</p>
+                </div>
+            </div>
+            
+            <!-- People Category -->
+            <div class="gallery-item" data-category="people">
+                <img src="Family gathering.jpeg" alt="Family gathering">
+                <div class="item-overlay">
+                    <h3>Family Reunion</h3>
+                    <p>Celebrating together</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="people">
+                <img src="Portrait of a friend.jpeg" alt="Portrait of a friend">
+                <div class="item-overlay">
+                    <h3>Portrait</h3>
+                    <p>Capturing genuine emotions</p>
+                </div>
+            </div>
+            
+            <div class="gallery-item" data-category="people">
+                <img src="Group of friends.jpeg" alt="Group of friends">
+                <div class="item-overlay">
+                    <h3>Friends Forever</h3>
+                    <p>Adventures with my closest friends</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Lightbox -->
+    <div class="lightbox">
+        <div class="lightbox-content">
+            <button class="close-lightbox">&times;</button>
+            <img src="" alt="" class="lightbox-img">
+            <div class="lightbox-nav">
+                <button class="prev-btn">&lt;</button>
+                <button class="next-btn">&gt;</button>
+            </div>
+            <div class="lightbox-caption"></div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <h3>PhotoAlbum</h3>
+            <p>Creating memories that last forever</p>
+            <div class="social-links">
+                <a href="#">Instagram</a>
+                <a href="#">Facebook</a>
+                <a href="#">Twitter</a>
+            </div>
+            <p>&copy; 2023 My Photo Album. All rights reserved.</p>
+        </div>
+    </footer>
+    
+    <!-- JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter functionality
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    // Add active class to current button
+                    this.classList.add('active');
+                    
+                    const filterValue = this.getAttribute('data-filter');
+                    
+                    galleryItems.forEach(item => {
+                        if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    });
+                });
+            });
+            
+            // Lightbox functionality
+            const lightbox = document.querySelector('.lightbox');
+            const lightboxImg = document.querySelector('.lightbox-img');
+            const lightboxCaption = document.querySelector('.lightbox-caption');
+            const closeBtn = document.querySelector('.close-lightbox');
+            const prevBtn = document.querySelector('.prev-btn');
+            const nextBtn = document.querySelector('.next-btn');
+            
+            let currentIndex = 0;
+            const visibleItems = () => Array.from(galleryItems).filter(item => item.style.display !== 'none');
+            
+            // Open lightbox
+            galleryItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const visible = visibleItems();
+                    currentIndex = visible.indexOf(this);
+                    
+                    const img = this.querySelector('img');
+                    const title = this.querySelector('h3').textContent;
+                    const description = this.querySelector('p').textContent;
+                    
+                    lightboxImg.src = img.src;
+                    lightboxImg.alt = img.alt;
+                    lightboxCaption.innerHTML = `<h3>${title}</h3><p>${description}</p>`;
+                    
+                    lightbox.classList.add('active');
+                });
+            });
+            
+            // Close lightbox
+            closeBtn.addEventListener('click', () => {
+                lightbox.classList.remove('active');
+            });
+            
+            // Close lightbox when clicking outside of content
+            lightbox.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    lightbox.classList.remove('active');
+                }
+            });
+            
+            // Next image
+            nextBtn.addEventListener('click', () => {
+                const visible = visibleItems();
+                currentIndex = (currentIndex + 1) % visible.length;
+                updateLightboxImage(visible[currentIndex]);
+            });
+            
+            // Previous image
+            prevBtn.addEventListener('click', () => {
+                const visible = visibleItems();
+                currentIndex = (currentIndex - 1 + visible.length) % visible.length;
+                updateLightboxImage(visible[currentIndex]);
+            });
+            
+            // Update lightbox image
+            function updateLightboxImage(item) {
+                const img = item.querySelector('img');
+                const title = item.querySelector('h3').textContent;
+                const description = item.querySelector('p').textContent;
+                
+                lightboxImg.src = img.src;
+                lightboxImg.alt = img.alt;
+                lightboxCaption.innerHTML = `<h3>${title}</h3><p>${description}</p>`;
+            }
+            
+            // Keyboard navigation
+            document.addEventListener('keydown', function(e) {
+                if (!lightbox.classList.contains('active')) return;
+                
+                if (e.key === 'Escape') {
+                    lightbox.classList.remove('active');
+                } else if (e.key === 'ArrowRight') {
+                    nextBtn.click();
+                } else if (e.key === 'ArrowLeft') {
+                    prevBtn.click();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
